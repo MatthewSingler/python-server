@@ -48,3 +48,16 @@ def create_employee(employee):
 
     EMPLOYEES.append(employee)
     return employee
+
+#function to delete an employee takes an id as an argument
+def delete_employee(id):
+#set initial value of the employee_index to -1 to initialize it, or incase one isn't found?
+    employee_index = -1
+#iterate the employees list(dictionary) but use enumerate so we can access the index value of each item.
+    for index, employee in enumerate(EMPLOYEES):
+#if the id of the employee equals the id being passed in then set the index equal to employee index instead of -1.
+        if employee["id"] == id:
+            employee_index = index
+#if the id was found, it's in position zero or greater, then use pop to remove it from the list(dictionary)
+        if employee_index >= 0:
+            EMPLOYEES.pop(employee_index)

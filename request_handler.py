@@ -2,7 +2,9 @@ import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from animals import get_all_animals, get_single_animal, create_animal, delete_animal
 from customers import get_all_customers, get_single_customer, create_customer
-from employees import get_all_employees, get_single_employee, create_employee
+ ms-delete-employees
+from employees import get_all_employees, get_single_employee, create_employee, delete_employee
+
 from locations import get_all_locations, get_single_location, create_location, delete_location
 
 
@@ -167,6 +169,11 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         if resource == "locations":
             delete_location(id)
+            self.wfile.write("".encode())
+
+  ms-delete-employees
+        if resource == "employees":
+            delete_employee(id)
             self.wfile.write("".encode())
 
 # This function is not inside the class. It is the starting

@@ -1,1 +1,2 @@
-from .request import delete_location, get_all_locations, get_single_location, create_location
+ ms-delete-employees
+from .request import get_all_locations, get_single_location, create_location, delete_location
