@@ -1,7 +1,7 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from animals import get_all_animals, get_single_animal, create_animal, delete_animal
-from customers import get_all_customers, get_single_customer, create_customer
+from customers import get_all_customers, get_single_customer, create_customer, delete_customer
 from employees import get_all_employees, get_single_employee, create_employee, delete_employee
 from locations import get_all_locations, get_single_location, create_location, delete_location
 
@@ -156,11 +156,12 @@ class HandleRequests(BaseHTTPRequestHandler):
         """Handles PUT requests to the server
         """
         self.do_POST()
-
+#set a 204 response code. This is not going to return anything from server except a 204 response saying the action was performed
     def do_DELETE(self):
         self._set_headers(204)
+#parse the url. The resource and id are a tuple that will be unpacked.
         (resource, id) = self.parse_url(self.path)
-
+#delete a single animal fro the list. If the resource is animals, we run the delete function and it takes an id as an argument.
         if resource == "animals":
             delete_animal(id)
             self.wfile.write("".encode())
@@ -172,6 +173,12 @@ class HandleRequests(BaseHTTPRequestHandler):
         if resource == "employees":
             delete_employee(id)
             self.wfile.write("".encode())
+
+        if resource == "customers":
+            delete_customer(id)
+            self.wfile.write("".encode())
+
+        
 
 # This function is not inside the class. It is the starting
 # point of this application.
