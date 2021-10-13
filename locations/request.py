@@ -32,6 +32,6 @@ def delete_location(id):
     for index, location in enumerate(LOCATIONS):
         if location["id"] == id:
             location_index = index
- ms-delete-employees
+            
         if location_index >= 0:
             LOCATIONS.pop(location_index)
