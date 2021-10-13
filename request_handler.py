@@ -1,6 +1,6 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from animals import get_all_animals, get_single_animal, create_animal
+from animals import get_all_animals, get_single_animal, create_animal, delete_animal
 from customers import get_all_customers, get_single_customer, create_customer
 from employees import get_all_employees, get_single_employee, create_employee
 from locations import get_all_locations, get_single_location, create_location
@@ -157,6 +157,13 @@ class HandleRequests(BaseHTTPRequestHandler):
         """
         self.do_POST()
 
+    def do_DELETE(self):
+        self._set_headers(204)
+        (resource, id) = self.parse_url(self.path)
+
+        if resource == "animals":
+            delete_animal(id)
+            self.wfile.write("".encode())
 
 # This function is not inside the class. It is the starting
 # point of this application.
