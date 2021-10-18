@@ -5,7 +5,7 @@ EMPLOYEES = [
     {
         "id": 1,
         "name": "Jessica Younker",
-        "address": "123 Street St.",
+        "email": "123 Street St.",
         "locationId": 2
     },
     {
@@ -37,12 +37,12 @@ EMPLOYEES = [
 #def get_all_employees():
 #    return EMPLOYEES
 
-def get_single_employee(id):
-    requested_employee = None
-    for employee in EMPLOYEES:
-        if employee["id"] == id:
-            requested_employee = employee
-    return requested_employee
+#def get_single_employee(id):
+#    requested_employee = None
+#    for employee in EMPLOYEES:
+#        if employee["id"] == id:
+#            requested_employee = employee
+#    return requested_employee
 
 def create_employee(employee):
     max_id = EMPLOYEES[-1]["id"]
@@ -80,7 +80,7 @@ def get_all_employees():
         e.id,
         e.name,
         e.email,
-        e.location
+        e.location_id
         FROM employees e
         """)
         employees = []
@@ -89,3 +89,21 @@ def get_all_employees():
             employee = Employee(row["id"], row["name"], row["location_id"])
             employees.append(employee.__dict__)
     return json.dumps(employees)
+
+def get_single_employee(id):
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        SELECT
+        e.id,
+        e.name,
+        e.email,
+        e.location_id
+        FROM employees e
+        WHERE e.id = ?
+        """, (id, ))
+
+        data = db_cursor.fetchone()
+        employee = Employee(data["id"], data["name"], data["email"], data["location_id"])
+    return json.dumps(employee.__dict__)
