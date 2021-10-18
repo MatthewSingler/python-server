@@ -1,3 +1,6 @@
+import sqlite3
+import json
+from models import Employee
 EMPLOYEES = [
     {
         "id": 1,
@@ -31,8 +34,8 @@ EMPLOYEES = [
     }
 ]
 
-def get_all_employees():
-    return EMPLOYEES
+#def get_all_employees():
+#    return EMPLOYEES
 
 def get_single_employee(id):
     requested_employee = None
@@ -67,3 +70,22 @@ def update_employee(id, new_employee):
         if employee["id"] == id:
             EMPLOYEES[index] = new_employee
             break
+
+def get_all_employees():
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        SELECT
+        e.id,
+        e.name,
+        e.email,
+        e.location
+        FROM employees e
+        """)
+        employees = []
+        dataset = db_cursor.fetchall()
+        for row in dataset:
+            employee = Employee(row["id"], row["name"], row["location_id"])
+            employees.append(employee.__dict__)
+    return json.dumps(employees)
