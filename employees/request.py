@@ -100,7 +100,7 @@ def get_single_employee(id):
         e.name,
         e.address,
         e.location_id
-        FROM employees e
+        FROM employee e
         WHERE e.id = ?
         """, (id, ))
 

@@ -82,3 +82,11 @@ SELECT
 	e.location_id
 FROM employee e
 WHERE e.id = 5
+
+SELECT
+	c.id,
+	c.name,
+	c.email,
+	c.password
+FROM customer c
+WHERE c.id = 2
