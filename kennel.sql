@@ -67,3 +67,10 @@ SELECT
     a.customer_id
 FROM animal a
 WHERE a.id = 5
+
+SELECT
+	l.id,
+	l.name,
+	l.address
+FROM location l
+WHERE l.id = 2
