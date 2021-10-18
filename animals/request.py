@@ -127,3 +127,33 @@ def get_all_animals():
 
     # Use `json` package to properly serialize list as JSON
     return json.dumps(animals)
+
+
+def get_single_animal(id):
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Use a ? parameter to inject a variable's value
+        # into the SQL statement.
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.breed,
+            a.status,
+            a.location_id,
+            a.customer_id
+        FROM animal a
+        WHERE a.id = ?
+        """, (id, ))
+
+        # Load the single result into memory
+        data = db_cursor.fetchone()
+
+        # Create an animal instance from the current row
+        animal = Animal(data['id'], data['name'], data['breed'],
+                        data['status'], data['location_id'],
+                        data['customer_id'])
+
+        return json.dumps(animal.__dict__)
