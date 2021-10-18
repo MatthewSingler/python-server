@@ -1,4 +1,6 @@
-import customers
+import sqlite3
+import json
+from models import Customer
 
 
 CUSTOMERS = [
@@ -28,16 +30,16 @@ CUSTOMERS = [
     }
 ]
 
-def get_all_customers():
-    return CUSTOMERS
+#def get_all_customers():
+#    return CUSTOMERS
 
-def get_single_customer(id):
-    requested_customer = None
-    for customer in CUSTOMERS:
-        if customer["id"] == id:
-            requested_customer = customer
+#def get_single_customer(id):
+#    requested_customer = None
+#    for customer in CUSTOMERS:
+#        if customer["id"] == id:
+#            requested_customer = customer
 
-    return requested_customer
+#    return requested_customer
 
 def create_customer(customer):
     max_id = CUSTOMERS[-1]["id"]
@@ -60,3 +62,39 @@ def update_customer(id, new_customer):
         if customer["id"] == id:
             CUSTOMERS[index] = new_customer
             break
+
+def get_all_customers():
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        SELECT
+        c.id,
+        c.name,
+        c.email,
+        c.password
+        FROM customer c
+        """)
+        customers = []
+        dataset = db_cursor.fetchall()
+        for row in dataset:
+            customer = Customer(row["id"], row["name"], row["email"], row["password"])
+            customers.append(customer.__dict__)
+        return json.dumps(customers)
+
+def get_single_customer(id):
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        SELECT
+        c.id,
+        c.name,
+        c.email,
+        c.password
+        FROM customer c
+        WHERE c.id = ?
+        """, (id, ))
+        data = db_cursor.fetchone()
+        customer = Customer(data["id"], data["name"], data["email"], data["password"])
+    return json.dumps(customer.__dict__)
