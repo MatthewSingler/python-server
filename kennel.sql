@@ -74,3 +74,11 @@ SELECT
 	l.address
 FROM location l
 WHERE l.id = 2
+
+SELECT
+	e.id,
+	e.name,
+	e.address,
+	e.location_id
+FROM employee e
+WHERE e.id = 3
