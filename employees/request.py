@@ -5,31 +5,31 @@ EMPLOYEES = [
     {
         "id": 1,
         "name": "Jessica Younker",
-        "email": "123 Street St.",
+        "address": "123 Street St.",
         "locationId": 2
     },
     {
         "id": 3,
         "name": "Zoe LeBlanc",
-        "email": "123 Street Rd.",
+        "address": "123 Street Rd.",
         "locationId": 1
     },
     {
         "name": "Hannah Hall",
-        "email": "123 Avenue St.",
+        "address": "123 Avenue St.",
         "id": 5,
         "locationId": 2
     },
     {
         "name": "Jenna Solis",
-        "email": "123 Street Ave.",
+        "address": "123 Street Ave.",
         "id": 14,
         "locationId": 1
     },
     {
         "id": 15,
         "name": "Ryan Tanay",
-        "email": "123 Road St.",
+        "address": "123 Road St.",
         "locationId": 2
     }
 ]
@@ -79,14 +79,14 @@ def get_all_employees():
         SELECT
         e.id,
         e.name,
-        e.email,
+        e.address,
         e.location_id
-        FROM employees e
+        FROM employee e
         """)
         employees = []
         dataset = db_cursor.fetchall()
         for row in dataset:
-            employee = Employee(row["id"], row["name"], row["location_id"])
+            employee = Employee(row["id"], row["name"], row["address"], row["location_id"])
             employees.append(employee.__dict__)
     return json.dumps(employees)
 
@@ -98,12 +98,12 @@ def get_single_employee(id):
         SELECT
         e.id,
         e.name,
-        e.email,
+        e.address,
         e.location_id
         FROM employees e
         WHERE e.id = ?
         """, (id, ))
 
         data = db_cursor.fetchone()
-        employee = Employee(data["id"], data["name"], data["email"], data["location_id"])
+        employee = Employee(data["id"], data["name"], data["address"], data["location_id"])
     return json.dumps(employee.__dict__)
