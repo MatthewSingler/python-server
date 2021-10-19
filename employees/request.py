@@ -107,3 +107,30 @@ def get_single_employee(id):
         data = db_cursor.fetchone()
         employee = Employee(data["id"], data["name"], data["address"], data["location_id"])
     return json.dumps(employee.__dict__)
+
+
+def get_employee_by_location(location_id):
+
+    with sqlite3.connect("./kennel.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        SELECT
+        e.id,
+        e.name,
+        e.address,
+        e.location_id
+        FROM Employee e
+        WHERE e.location_id = ?
+        """, (location_id, ))
+
+        employees = []
+        dataset = db_cursor.fetchall()
+
+        for row in dataset:
+            employee = Employee(row['id'], row['name'], row['address'], row['location_id'])
+            employees.append(employee.__dict__)
+
+    return json.dumps(employees)
