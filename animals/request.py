@@ -1,6 +1,7 @@
 import sqlite3
 import json
-from models import Animal
+from sqlite3 import dbapi2
+from models import Animal, Location
 
 ANIMALS = [
     {
@@ -76,14 +77,37 @@ def delete_animal(id):
         ANIMALS.pop(animal_index)
 
 
-def update_animal(id, new_animal):
+#def update_animal(id, new_animal):
     # Iterate the ANIMALS list, but use enumerate() so that
     # you can access the index value of each item.
-    for index, animal in enumerate(ANIMALS):
-        if animal["id"] == id:
+#    for index, animal in enumerate(ANIMALS):
+#        if animal["id"] == id:
             # Found the animal. Update the value.
-            ANIMALS[index] = new_animal
-            break
+#            ANIMALS[index] = new_animal
+#            break
+def update_animal(id, new_animal):
+    with sqlite3.connect("./kennel.db") as conn:
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        UPDATE Animal
+        SET
+            name = ?,
+            breed = ?,
+            status = ?,
+            location_id = ?,
+            customer_id = ?
+        WHERE id = ?
+        """, (  new_animal["name"],
+                new_animal["breed"],
+                new_animal["status"],
+                new_animal["location_id"], 
+                new_animal["customer_id"],
+                id))
+        rows_affected = db_cursor.rowcount
+    if rows_affected == 0:
+        return False
+    else:
+        return True
 
 
 def get_all_animals():
@@ -97,13 +121,17 @@ def get_all_animals():
         # Write the SQL query to get the information you want
         db_cursor.execute("""
         SELECT
-            a.id,
-            a.name,
-            a.breed,
-            a.status,
-            a.location_id,
-            a.customer_id
-        FROM animal a
+        a.id,
+        a.name,
+        a.breed,
+        a.status,
+        a.location_id,
+        a.customer_id,
+        l.name location_name,
+        l.address location_address
+        FROM Animal a
+        JOIN Location l
+        ON l.id = a.location_id
         """)
 
         # Initialize an empty list to hold all animal representations
@@ -122,6 +150,8 @@ def get_all_animals():
             animal = Animal(row['id'], row['name'], row['breed'],
                             row['status'], row['location_id'],
                             row['customer_id'])
+            location = Location(row['id'], row['location_name'], row['location_address'])
+            animal.location = location.__dict__
 
             animals.append(animal.__dict__)
 
@@ -147,14 +177,10 @@ def get_single_animal(id):
         FROM animal a
         WHERE a.id = ?
         """, (id, ))
-
         # Load the single result into memory
         data = db_cursor.fetchone()
-
         # Create an animal instance from the current row
-        animal = Animal(data['id'], data['name'], data['breed'],
-                        data['status'], data['location_id'],
-                        data['customer_id'])
+        animal = Animal(data['id'], data['name'], data['breed'], data['status'], data['location_id'], data['customer_id'])
 
         return json.dumps(animal.__dict__)
 
